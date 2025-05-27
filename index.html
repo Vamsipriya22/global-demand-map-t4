@@ -22,9 +22,65 @@
     globe: new Cesium.Globe(Cesium.Ellipsoid.WGS84)
   });
 
-  // Set ocean color to forest green
-  viewer.scene.globe.baseColor = Cesium.Color.FORESTGREEN;
+  // Blue ocean background
+  viewer.scene.globe.baseColor = Cesium.Color.SKYBLUE;
   viewer.scene.globe.depthTestAgainstTerrain = true;
+
+  // Map of countries with their colors and URLs
+  const countryData = {
+    "Albania": { "color": "#B2D8B2", "link": "https://transparency.entsoe.eu/load-domain/r2/totalLoadR2/show?name=&defaultValue=false&viewType=TABLE&areaType=CTY&atch=false&dateTime.dateTime=13.03.2025+00:00|CET|DAY&biddingZone.values=CTY|10YAL-KESH-----5!CTY|10YAL-KESH-----5&dateTime.timezone=CET_CEST&dateTime.timezone_input=CET+(UTC+1)+/+CEST+(UTC+2) "},
+    "Peru": { "color": "#0D400D", "link": "https://www.coes.org.pe/Portal/portalinformacion/demanda" }
+  };
+
+  // Load the GeoJSON for countries
+Cesium.GeoJsonDataSource.load(
+  'https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json',
+  {
+    stroke: Cesium.Color.YELLOW,
+    strokeWidth: 1,
+    fill: Cesium.Color.fromCssColorString("#808080").withAlpha(1.0)
+  }
+).then(dataSource => {
+  viewer.dataSources.add(dataSource);
+  viewer.zoomTo(dataSource);
+
+  // Assign colors and links
+  dataSource.entities.values.forEach(entity => {
+    const name = entity.properties.NAME?.getValue() || entity.properties.name?.getValue() || entity.name;
+
+    if (entity.polygon) {
+      entity.polygon.outline = true;
+      entity.polygon.outlineColor = Cesium.Color.YELLOW;
+
+      if (name && countryData[name]) {
+        // Country is in our data; assign color and link
+        const c = countryData[name].color;
+        entity.polygon.material = Cesium.Color.fromCssColorString(c).withAlpha(1.0);
+        entity.properties.link = countryData[name].link;
+      } else {
+        // Country not in our data; assign dark gray
+        entity.polygon.material = Cesium.Color.fromCssColorString("#808080").withAlpha(1.0);
+        entity.properties.link = null;
+      }
+    }
+  });
+});
+
+    // Add click handler to open link on country click
+    const handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+    handler.setInputAction(click => {
+      const picked = viewer.scene.pick(click.position);
+      if (Cesium.defined(picked) && picked.id && picked.id.properties && picked.id.properties.link) {
+        const linkValue = picked.id.properties.link;
+        const link = (typeof linkValue.getValue === 'function') ? linkValue.getValue() : linkValue;
+        if (link) {
+          window.open(link, '_blank');
+        }
+      }
+    }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+  }).otherwise(error => {
+    console.error('Error loading GeoJSON:', error);
+  });
 </script>
 </body>
 </html>
