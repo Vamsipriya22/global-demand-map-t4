@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>Simple Cesium Globe with Uniform Country Fill</title>
+<title>Separate Ocean and Country Colors</title>
 <script src="https://cesium.com/downloads/cesiumjs/releases/1.111/Build/Cesium/Cesium.js"></script>
 <link href="https://cesium.com/downloads/cesiumjs/releases/1.111/Build/Cesium/Widgets/widgets.css" rel="stylesheet" />
 <style>
@@ -22,26 +22,25 @@
     globe: new Cesium.Globe(Cesium.Ellipsoid.WGS84)
   });
 
-  // Ocean background color (very dark gray)
-  viewer.scene.globe.baseColor = Cesium.Color.DARKSLATEGRAY; // Very dark gray
-  viewer.scene.globe.depthTestAgainstTerrain = true;
+  // Ocean background color (dark gray)
+  viewer.scene.globe.baseColor = Cesium.Color.GREEN;
 
-  // Load GeoJSON for countries
+  // Load countries with different fill
   Cesium.GeoJsonDataSource.load(
     'https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json',
     {
       stroke: Cesium.Color.YELLOW,
       strokeWidth: 1,
-      fill: Cesium.Color.fromCssColorString("#0D400D").withAlpha(1.0) // Light gray fill for countries
+      fill: Cesium.Color.fromCssColorString("#AAAAAA").withAlpha(1.0) // Countries fill color
     }
   ).then(dataSource => {
     viewer.dataSources.add(dataSource);
     viewer.zoomTo(dataSource);
 
-    // Explicitly assign fill and outline to polygons
+    // Ensure all countries have proper fill and outline
     dataSource.entities.values.forEach(entity => {
       if (entity.polygon) {
-        entity.polygon.material = Cesium.Color.fromCssColorString("#0D400D").withAlpha(1.0); // light gray
+        entity.polygon.material = Cesium.Color.fromCssColorString("#AAAAAA").withAlpha(1.0); // Light gray for countries
         entity.polygon.outline = true;
         entity.polygon.outlineColor = Cesium.Color.YELLOW;
       }
