@@ -22,8 +22,8 @@
     globe: new Cesium.Globe(Cesium.Ellipsoid.WGS84)
   });
 
-  // Ocean background color (light blue)
-  viewer.scene.globe.baseColor = Cesium.Color.fromCssColorString("#ADD8E6"); // Light blue
+  // Ocean background color (very dark gray)
+  viewer.scene.globe.baseColor = Cesium.Color.DARKSLATEGRAY; // Very dark gray
   viewer.scene.globe.depthTestAgainstTerrain = true;
 
   // Load GeoJSON for countries
@@ -32,16 +32,16 @@
     {
       stroke: Cesium.Color.YELLOW,
       strokeWidth: 1,
-      fill: Cesium.Color.fromCssColorString("#555555").withAlpha(1.0) // Dark gray fill for all countries
+      fill: Cesium.Color.fromCssColorString("#0D400D").withAlpha(1.0) // Light gray fill for countries
     }
   ).then(dataSource => {
     viewer.dataSources.add(dataSource);
     viewer.zoomTo(dataSource);
 
-    // Set polygon fill and outline explicitly for all countries
+    // Explicitly assign fill and outline to polygons
     dataSource.entities.values.forEach(entity => {
       if (entity.polygon) {
-        entity.polygon.material = Cesium.Color.fromCssColorString("#555555").withAlpha(1.0); // dark gray fill
+        entity.polygon.material = Cesium.Color.fromCssColorString("#0D400D").withAlpha(1.0); // light gray
         entity.polygon.outline = true;
         entity.polygon.outlineColor = Cesium.Color.YELLOW;
       }
