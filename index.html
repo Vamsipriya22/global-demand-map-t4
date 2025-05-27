@@ -22,17 +22,9 @@
     globe: new Cesium.Globe(Cesium.Ellipsoid.WGS84)
   });
 
-  viewer.scene.globe.baseColor = Cesium.Color.SKYBLUE;
+  // Set ocean color to forest green
+  viewer.scene.globe.baseColor = Cesium.Color.FORESTGREEN;
   viewer.scene.globe.depthTestAgainstTerrain = true;
-
-  Cesium.GeoJsonDataSource.load('https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson', {
-    stroke: Cesium.Color.YELLOW,
-    strokeWidth: 1,
-    fill: Cesium.Color.fromCssColorString("#808080").withAlpha(1.0)
-  }).then(dataSource => {
-    viewer.dataSources.add(dataSource);
-    viewer.zoomTo(dataSource);
-  });
 </script>
 </body>
 </html>
